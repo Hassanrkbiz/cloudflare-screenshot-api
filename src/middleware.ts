@@ -17,7 +17,7 @@ export const errorHandler = (): MiddlewareHandler => async (c, next) => {
 };
 
 // Simple in-memory rate limiter (for demo; use Durable Objects for prod scale)
-const RATE_LIMIT = 60; // requests per minute
+const RATE_LIMIT = 5; // requests per minute
 const ipCache = new Map<string, { count: number; ts: number }>();
 
 export const rateLimiter = (): MiddlewareHandler => async (c, next) => {

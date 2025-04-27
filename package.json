@@ -1,0 +1,19 @@
+{
+  "name": "cloudflare-screenshot-api",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "wrangler dev --remote",
+    "deploy": "wrangler publish"
+  },
+  "dependencies": {
+    "flareshot": "^1.0.5",
+    "hono": "^4.1.5",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5",
+    "wrangler": "^4.13.2"
+  }
+}

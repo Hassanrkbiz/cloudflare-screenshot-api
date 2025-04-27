@@ -1,0 +1,7 @@
+name = "cloudflare-screenshot-api"
+workers_dev = true
+main = "src/index.ts"
+compatibility_date = "2024-04-27"
+compatibility_flags = ["nodejs_compat"]
+
+browser = { binding = "MYBROWSER" }

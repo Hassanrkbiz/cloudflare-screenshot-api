@@ -15,10 +15,15 @@ Request a screenshot of a web page.
 - `url` (required): The URL to screenshot
 - `fullPage` (optional, default: false): Set to `true` for full page
 - `type` (optional, default: png): Either `png` or `jpeg`
+- `device` (optional): One of `desktop`, `tablet`, or `mobile` for device emulation
+- `delay` (optional): Delay before screenshot in seconds (0-10)
+- `width` (optional): Custom viewport width (overrides device)
+- `height` (optional): Custom viewport height (overrides device)
+- `quality` (optional): JPEG quality (0-100)
 
 Example curl request:
 ```sh
-curl "https://<your-worker-domain>/take?url=https://example.com&fullPage=true&type=png" --output screenshot.png
+curl "https://<your-worker-domain>/take?url=https://example.com&fullPage=true&type=png&device=mobile&delay=3" --output screenshot.png
 ```
 
 ## Usage (in Worker code)
@@ -30,7 +35,15 @@ import { Flareshot } from 'flareshot';
 
 // In your Hono route handler:
 const client = new Flareshot(env.MYBROWSER);
-const image = await client.takeScreenshot(url, { fullPage: true, type: 'png' });
+const image = await client.takeScreenshot(url, {
+  fullPage: true,
+  type: 'png',
+  device: 'mobile', // 'desktop', 'tablet', or 'mobile'
+  delay: 3,         // seconds (0-10)
+  width: 1200,      // optional, overrides device
+  height: 800,      // optional, overrides device
+  quality: 90,      // optional, JPEG only
+});
 return new Response(image, { headers: { 'Content-Type': 'image/png' } });
 ```
 

@@ -10,6 +10,8 @@ const ScreenshotSchema = z.object({
   width: z.coerce.number().int().positive().optional(),
   height: z.coerce.number().int().positive().optional(),
   quality: z.coerce.number().int().min(0).max(100).optional(),
+  device: z.enum(['desktop', 'tablet', 'mobile']).optional(),
+  delay: z.coerce.number().int().min(0).max(10).optional(),
 });
 
 const router = new Hono<{ Bindings: Env }>();
@@ -21,12 +23,14 @@ router.get('/', async (c: Context<{ Bindings: Env }>) => {
   const width = c.req.query('width') ? Number(c.req.query('width')) : undefined;
   const height = c.req.query('height') ? Number(c.req.query('height')) : undefined;
   const quality = c.req.query('quality') ? Number(c.req.query('quality')) : undefined;
+  const device = c.req.query('device');
+  const delay = c.req.query('delay') ? Number(c.req.query('delay')) : undefined;
 
-  const parse = ScreenshotSchema.safeParse({ url, fullPage, type, width, height, quality });
+  const parse = ScreenshotSchema.safeParse({ url, fullPage, type, width, height, quality, device, delay });
   if (!parse.success) {
     return c.json({ error: 'Invalid input', details: parse.error.errors }, 400);
   }
-  const { url: validatedUrl, fullPage: validatedFullPage, type: validatedType, width: validatedWidth, height: validatedHeight, quality: validatedQuality } = parse.data;
+  const { url: validatedUrl, fullPage: validatedFullPage, type: validatedType, width: validatedWidth, height: validatedHeight, quality: validatedQuality, device: validatedDevice, delay: validatedDelay } = parse.data;
 
   try {
     // Use Flareshot class with the browser binding from env
@@ -35,6 +39,8 @@ router.get('/', async (c: Context<{ Bindings: Env }>) => {
     if (validatedWidth) options.width = validatedWidth;
     if (validatedHeight) options.height = validatedHeight;
     if (validatedQuality) options.quality = validatedQuality;
+    if (validatedDevice) options.device = validatedDevice;
+    if (validatedDelay !== undefined) options.delay = validatedDelay;
     const image = await client.takeScreenshot(validatedUrl, options);
     if (validatedType === 'png') {
       c.header('content-type', 'image/png');
